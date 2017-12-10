@@ -3,6 +3,10 @@ define('INSERT_TITLE', 'Σχολεία');
 define('ADD_NEW', 'Εισάγετε ένα ακόμα σχολείο');
 define('ADD_NEW_BUTTON', 'καταχώρηση');
 define('ADD_NEW_TITLE', 'Καταχώρηση επόμενου σχολείου');
+
+# Keep this here as long as it stands alone
+require_once('db.php');
+$db = new ODKDB() or die("Cannot connect to DB");
 ?>
 
 <head>
@@ -35,20 +39,30 @@ define('ADD_NEW_TITLE', 'Καταχώρηση επόμενου σχολείου'
       </h4>
     </form>
   </div>
+
+  <!-- Add new instituion -->
+<?php
+if ($_POST && $_POST['new_institution']) {
+    $db->insert_institution($_POST['new_institution']);
+    unset($_POST['new_institution']);
+}
+?>
   <div class="container bg-info">
     <h4><?php echo ADD_NEW_TITLE; ?></h4>
-    <form class="form-horizontal form-group" id="school-new">
+    <form class="form-horizontal form-group" id="school-new"
+          action="./institutions.php">
       <div class="form-group">
         <div class="col-sm-10">
           <input type="text" class="form-control" id="new_institution"
-                 placeholder="<?php echo ADD_NEW; ?>">
+                 name="new_institution" placeholder="<?php echo ADD_NEW; ?>">
         </div>
         <div class="col-sm-2">
-          <button type="submit" class="btn btn-success">
+          <button type="submit" class="btn btn-success" formmethod="post">
             <span class="glyphicon glyphicon-ok">&nbsp;<?php echo ADD_NEW_BUTTON; ?></span>
           </button>
         </div>
       </div>
     </form>
   </div>
+
 </html>

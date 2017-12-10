@@ -7,6 +7,10 @@ define('ADD_NEW_TITLE', 'Επόμενη αίτηση');
 define('APPLICANTS', 'Αιτούντες');
 define('POINTS', 'Μόρια');
 define('ACTIONS', ' ');
+
+# Keep this here as long as it stands alone
+require_once('db.php');
+$db = new ODKDB() or die("Cannot connect to DB");
 ?>
 
 <head>
@@ -48,17 +52,29 @@ define('ACTIONS', ' ');
       </h4>
     </form>
   </div>
+
+<?php
+if ($_POST && $_POST['new_applicant'] && $_POST['new_points']) {
+    $db->insert_applicant($_POST['new_applicant'], $_POST['new_points']);
+    unset($_POST['new_applicant']);
+    unset($_POST['new_points']);
+}
+?>
+  <!-- Add new application -->
   <div class="container bg-info">
     <h4><?php echo ADD_NEW_TITLE; ?></h4>
-    <form class="form-horizontal form-group" id="school-new">
+    <form class="form-horizontal form-group" id="school-new"
+          action="./applicants.php">
       <div class="form-group">
         <div class="col-sm-12">
           <div class="col-sm-8">
             <input type="text" class="form-control" id="new_applicant"
+                   name="new_applicant"
                    placeholder="<?php echo ADD_NEW; ?>">
           </div>
           <div class="col-sm-1">
             <input type="text" class="form-control" id="new_points"
+                   name="new_points"
                    placeholder="<?php echo ADD_NEW_POINTS; ?>">
           </div>
         </div>
@@ -83,7 +99,7 @@ define('ACTIONS', ' ');
         </div>
         <div>&nbsp;</div>
         <div class="col-sm-12"><div class="col-sm-2">
-          <button type="submit" class="btn btn-success">
+          <button type="submit" class="btn btn-success" formmethod="post">
             <span class="glyphicon glyphicon-ok">&nbsp;<?php echo ADD_NEW_BUTTON; ?></span>
           </button>
         </div></div>
