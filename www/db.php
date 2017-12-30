@@ -9,7 +9,7 @@ class ODKDB {
         if ($this->debug) $this->log($sql);
         $r = $this->conn->query($sql);
         if ($this->debug && $this->conn->error) $this->log($this->conn->error);
-
+        return $r;
     }
 
     public function init() {
@@ -18,6 +18,19 @@ class ODKDB {
         $this->q($this->init_job);
         $this->q($this->init_application);
     }
+
+    public function close() {
+        return $this->conn->close();
+    }
+
+    private function start_transaction() {
+        return $this->q("START TRANSACTION");
+    }
+
+    private function end_transaction($success=TRUE) {
+        return $this->q(($success) ? "COMMIT" : "ROLLBACK");
+    }
+
 
     public function reset() {
         $this->q("DROP TABLES application, job, institution, applicant;");
@@ -38,7 +51,7 @@ class ODKDB {
     // Applicant
     private $init_applicant = "CREATE TABLE IF NOT EXISTS applicant ("
     . "applicant_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
-    . "name VARCHAR(256), "
+    . "name VARCHAR(256) NOT NULL UNIQUE, "
     . "points INT NOT NULL"
     . ");";
 
@@ -55,7 +68,7 @@ class ODKDB {
     // Institution
     private $init_institution = "CREATE TABLE IF NOT EXISTS institution ("
     . "institution_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
-    . "name VARCHAR(256)"
+    . "name VARCHAR(256) NOT NULL UNIQUE"
     . ");";
 
 
@@ -83,6 +96,27 @@ class ODKDB {
         . (($applicant_id == NULL) ? "NULL" : $applicant_id)
         . ");");
         return $this->conn->insert_id;
+    }
+
+    // SELECT methods
+    public function next_institution() {
+        $this->start_transaction();
+        $r = $this->q('SELECT * FROM institution ORDER BY institution_id;');
+        while ($r and $row = $r->fetch_assoc()) {
+            $row['name'] = urldecode($row['name']);
+            yield($row);
+        }
+        $this->end_transaction($r);
+    }
+
+    public function next_applicant() {
+        $this->start_transaction();
+        $r = $this->q('SELECT * FROM applicant ORDER BY applicant_id;');
+        while ($r and $row = $r->fetch_assoc()) {
+            $row['name'] = urldecode($row['name']);
+            yield($row);
+        }
+        $this->end_transaction($r);
     }
 
     // Application

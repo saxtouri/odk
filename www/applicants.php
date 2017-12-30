@@ -22,15 +22,22 @@ $db = new ODKDB() or die("Cannot connect to DB");
 </head>
 <html>
   <div class="container">
-      <h4 class="col-sm-12 bg-primary">
-        <span class="col-sm-8"><?php echo APPLICANTS; ?></span>
-        <span class="col-sm-1"><?php echo POINTS; ?></span>
-        <span class="col-sm-3"><?php echo ACTIONS; ?></span>
-      </h4>
-    <form class="form-horizontal form-group" id="inst-1">
+    <h4 class="col-sm-12 bg-primary">
+      <span class="col-sm-8"><?php echo APPLICANTS; ?></span>
+      <span class="col-sm-1"><?php echo POINTS; ?></span>
+      <span class="col-sm-3"><?php echo ACTIONS; ?></span>
+    </h4>
+
+<?php
+foreach ($db->next_applicant() as $applicant) {
+    $id = $applicant['applicant_id'];
+    $name = $applicant['name'];
+    $points = $applicant['points']
+?>
+    <form class="form-horizontal form-group" id="appl-<?php echo $id; ?>">
       <h4 class="col-sm-12">
-        <span class="col-sm-8">Applicant 1</span>
-        <span class="col-sm-1">20</span>
+        <span class="col-sm-8"><?php echo $name; ?></span>
+        <span class="col-sm-1"><?php echo $points; ?></span>
         <button type="submit" class="btn btn-warning">
           <span class="glyphicon glyphicon-pencil"></span>
         </button>
@@ -39,25 +46,17 @@ $db = new ODKDB() or die("Cannot connect to DB");
         </button>
       </h4>
     </form>
-    <form class="form-horizontal form-group" id="inst-2">
-      <h4 class="col-sm-12">
-        <span class="col-sm-8">Applicant 2</span>
-        <span class="col-sm-1">18</span>
-        <button type="submit" class="btn btn-warning">
-          <span class="glyphicon glyphicon-pencil"></span>
-        </button>
-        <button type="submit" class="btn btn-danger">
-          <span class="glyphicon glyphicon-remove"></span>
-        </button>
-      </h4>
-    </form>
+<?php } ?>
   </div>
 
 <?php
 if ($_POST && $_POST['new_applicant'] && $_POST['new_points']) {
+    echo "<b><?php print_r($_POST); ?>";
     $db->insert_applicant($_POST['new_applicant'], $_POST['new_points']);
     unset($_POST['new_applicant']);
     unset($_POST['new_points']);
+    $_POST['new_applicant'] = NULL;
+    $_POST['new_points'] = NULL;
 }
 ?>
   <!-- Add new application -->
@@ -79,24 +78,26 @@ if ($_POST && $_POST['new_applicant'] && $_POST['new_points']) {
           </div>
         </div>
         <h4 class="col-sm-12">Choices in order</h4>
+<?php
+for ($i = 1; $i <= 5; $i++) {
+  $institutions = array();
+  foreach ($db->next_institution() as $institution)
+    array_push($institutions, $institution)
+?>
         <div class="col-sm-12">
-          <div class="col-sm-2"><label for="choice-1">Choice 1:</label></div>
+          <div class="col-sm-2"><label for="choice-<?php echo $i; ?>">
+            Choice <?php echo $i; ?>:</label>
+          </div>
           <div class="col-sm-8">
-            <select class="form-control" id="choice-1">
-              <option>Institution 1</option>
-              <option>Institution 2</option>
+            <select class="form-control" id="choice-<?php echo $i; ?>">
+              <option>Empty</option>
+            <?php foreach ($institutions as $institution) { ?>
+              <option><?php echo $institution['name']; ?></option>
+            <?php } ?>
             </select>
           </div>
         </div>
-        <div class="col-sm-12">
-          <div class="col-sm-2"><label for="choice-1">Choice 2:</label></div>
-          <div class="col-sm-8">
-            <select class="form-control" id="choice-1">
-              <option>Institution 1</option>
-              <option>Institution 2</option>
-            </select>
-          </div>
-        </div>
+<?php } ?>
         <div>&nbsp;</div>
         <div class="col-sm-12"><div class="col-sm-2">
           <button type="submit" class="btn btn-success" formmethod="post">

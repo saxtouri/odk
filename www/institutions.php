@@ -17,9 +17,15 @@ $db = new ODKDB() or die("Cannot connect to DB");
   <title><?php echo INSERT_TITLE; ?></title>
 </head>
 <html>
+
   <div class="container">
-    <form class="form-horizontal form-group" id="inst-1">
-      <h4 class="col-sm-12">Institution 1&nbsp;
+<?php
+foreach ($db->next_institution() as $institution) {
+    $id = $institution['institution_id'];
+    $name = $institution['name'];
+?>
+    <form class="form-horizontal form-group" id="inst-<?php echo $id; ?>">
+      <h4 class="col-sm-12"><?php echo $name; ?>&nbsp;
         <button type="submit" class="btn btn-warning">
           <span class="glyphicon glyphicon-pencil"></span>
         </button>
@@ -28,19 +34,10 @@ $db = new ODKDB() or die("Cannot connect to DB");
         </button>
       </h4>
     </form>
-    <form class="form-horizontal form-group" id="inst-2">
-      <h4 class="col-sm-12">Institution 2&nbsp;
-        <button type="submit" class="btn btn-warning">
-          <span class="glyphicon glyphicon-pencil"></span>
-        </button>
-        <button type="submit" class="btn btn-danger">
-          <span class="glyphicon glyphicon-remove"></span>
-        </button>
-      </h4>
-    </form>
+<?php } ?>
   </div>
 
-  <!-- Add new instituion -->
+  <!-- Add new institution -->
 <?php
 if ($_POST && $_POST['new_institution']) {
     $db->insert_institution($_POST['new_institution']);

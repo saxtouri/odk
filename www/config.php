@@ -4,7 +4,7 @@
  * except if you know what you are doing.
  */
 // General settings
-define('DEBUG', True); /* Show debug messages */
+define('DEBUG', False); /* Show debug messages */
 
 // DB settings
 define('DB_HOSTNAME', 'mysql');
