@@ -11,6 +11,21 @@ define('ACTIONS', ' ');
 # Keep this here as long as it stands alone
 require_once('db.php');
 $db = new ODKDB() or die("Cannot connect to DB");
+
+// If something should change, change it and refresh the page
+$changes = 0;
+if ($_POST && $_POST['new_applicant'] && $_POST['new_points']) {
+    $db->insert_applicant($_POST['new_applicant'], $_POST['new_points']);
+    unset($_POST['new_applicant']);
+    unset($_POST['new_points']);
+    $changes++;
+}
+if ($_POST && $_POST['delete_applicant']) {
+    $r = $db->delete_applicant($_POST['delete_applicant']);
+    unset($_POST['delete_applicant']);
+    $changes++;
+}
+if ($changes > 0) header("Refresh:0");
 ?>
 
 <head>
@@ -41,7 +56,8 @@ foreach ($db->next_applicant() as $applicant) {
         <button type="submit" class="btn btn-warning">
           <span class="glyphicon glyphicon-pencil"></span>
         </button>
-        <button type="submit" class="btn btn-danger">
+        <button type="submit" class="btn btn-danger" formmethod="post"
+            name="delete_applicant" value="<?php echo $id; ?>">
           <span class="glyphicon glyphicon-remove"></span>
         </button>
       </h4>
@@ -49,16 +65,6 @@ foreach ($db->next_applicant() as $applicant) {
 <?php } ?>
   </div>
 
-<?php
-if ($_POST && $_POST['new_applicant'] && $_POST['new_points']) {
-    echo "<b><?php print_r($_POST); ?>";
-    $db->insert_applicant($_POST['new_applicant'], $_POST['new_points']);
-    unset($_POST['new_applicant']);
-    unset($_POST['new_points']);
-    $_POST['new_applicant'] = NULL;
-    $_POST['new_points'] = NULL;
-}
-?>
   <!-- Add new application -->
   <div class="container bg-info">
     <h4><?php echo ADD_NEW_TITLE; ?></h4>

@@ -7,6 +7,19 @@ define('ADD_NEW_TITLE', 'Καταχώρηση επόμενου σχολείου'
 # Keep this here as long as it stands alone
 require_once('db.php');
 $db = new ODKDB() or die("Cannot connect to DB");
+
+$changes = 0;
+if ($_POST && $_POST['new_institution']) {
+    $db->insert_institution($_POST['new_institution']);
+    unset($_POST['new_institution']);
+    $changes++;
+}
+if ($_POST && $_POST['delete_institution']) {
+    $r = $db->delete_institution($_POST['delete_institution']);
+    unset($_POST['delete_institution']);
+    $changes++;
+}
+if ($changes > 0) header("Refresh:0");
 ?>
 
 <head>
@@ -24,12 +37,14 @@ foreach ($db->next_institution() as $institution) {
     $id = $institution['institution_id'];
     $name = $institution['name'];
 ?>
-    <form class="form-horizontal form-group" id="inst-<?php echo $id; ?>">
+    <form class="form-horizontal form-group" id="inst-<?php echo $id; ?>"
+        action="./institutions.php">
       <h4 class="col-sm-12"><?php echo $name; ?>&nbsp;
-        <button type="submit" class="btn btn-warning">
+        <button type="submit" class="btn btn-warning" name="lala">
           <span class="glyphicon glyphicon-pencil"></span>
         </button>
-        <button type="submit" class="btn btn-danger">
+        <button type="submit" class="btn btn-danger" formmethod="post"
+            name="delete_institution" value="<?php echo $id; ?>">
           <span class="glyphicon glyphicon-remove"></span>
         </button>
       </h4>
@@ -38,12 +53,6 @@ foreach ($db->next_institution() as $institution) {
   </div>
 
   <!-- Add new institution -->
-<?php
-if ($_POST && $_POST['new_institution']) {
-    $db->insert_institution($_POST['new_institution']);
-    unset($_POST['new_institution']);
-}
-?>
   <div class="container bg-info">
     <h4><?php echo ADD_NEW_TITLE; ?></h4>
     <form class="form-horizontal form-group" id="school-new"

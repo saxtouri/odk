@@ -64,6 +64,11 @@ class ODKDB {
         return $this->conn->insert_id;
     }
 
+    public function delete_applicant($applicant_id) {
+        return($this->q("DELETE FROM applicant "
+        . "WHERE applicant_id=\"" . $applicant_id . "\";"
+        ));
+    }
 
     // Institution
     private $init_institution = "CREATE TABLE IF NOT EXISTS institution ("
@@ -78,6 +83,12 @@ class ODKDB {
         . "\"" . (($name == NULL) ? "" : urlencode($name)). "\""
         . ");");
         return $this->conn->insert_id;
+    }
+
+    public function delete_institution($institution_id) {
+        return($this->q("DELETE FROM institution "
+        . "WHERE institution_id=\"" . $institution_id . "\";"
+        ));
     }
 
     // job
