@@ -73,14 +73,16 @@ class ODKDB {
     // Institution
     private $init_institution = "CREATE TABLE IF NOT EXISTS institution ("
     . "institution_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
-    . "name VARCHAR(256) NOT NULL UNIQUE"
+    . "name VARCHAR(256) NOT NULL UNIQUE, "
+    . "positions INT DEFAULT 0"
     . ");";
 
 
-    public function insert_institution($name=NULL) {
+    public function insert_institution($name, $positions=0) {
         $this->q("INSERT INTO institution VALUES ("
         . "NULL, "
-        . "\"" . (($name == NULL) ? "" : urlencode($name)). "\""
+        . "\"" . urlencode($name) . "\", "
+        . $positions
         . ");");
         return $this->conn->insert_id;
     }
