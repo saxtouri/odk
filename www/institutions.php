@@ -3,6 +3,9 @@ define('INSERT_TITLE', 'Σχολεία');
 define('ADD_NEW', 'Εισάγετε ένα ακόμα σχολείο');
 define('ADD_NEW_BUTTON', 'καταχώρηση');
 define('ADD_NEW_TITLE', 'Καταχώρηση επόμενου σχολείου');
+// define('INSTITUTIONS', 'Σχολεία');
+// define('POSITIONS', 'Αριθμός θέσεων');
+// define('ACTIONS', ' ');
 
 # Keep this here as long as it stands alone
 require_once('db.php');
@@ -32,6 +35,12 @@ if ($changes > 0) header("Refresh:0");
 <html>
 
   <div class="container">
+    <!-- <h4 class="col-sm-12 bg-primary">
+      <span class="col-sm-8"><?php echo INSTITUTIONS; ?></span>
+      <span class="col-sm-1"><?php echo POSITIONS; ?></span>
+      <span class="col-sm-3"><?php echo ACTIONS; ?></span>
+    </h4> -->
+
 <?php
 foreach ($db->next_institution() as $institution) {
     $id = $institution['institution_id'];
@@ -59,7 +68,7 @@ foreach ($db->next_institution() as $institution) {
           action="./institutions.php">
       <div class="form-group">
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="new_institution"
+          <input type="text" class="form-control" id="new_institution" required
                  name="new_institution" placeholder="<?php echo ADD_NEW; ?>">
         </div>
         <div class="col-sm-2">
