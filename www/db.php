@@ -151,7 +151,6 @@ class ODKDB {
         return $this->conn->insert_id;
     }
 
-
     // Helper methods
     public function print_init_queries() {
         echo "<p>" . $this->init_applicant . "</p>";

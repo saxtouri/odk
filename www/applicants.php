@@ -20,14 +20,15 @@ $db = new ODKDB() or die("Cannot connect to DB");
 // If something should change, change it and refresh the page
 $changes = 0;
 if ($_POST && $_POST['new_applicant'] && $_POST['new_points']) {
-  // Collect preferences
-  $preferences = array();
-  $i = 1;
-  while ($i <= NUMBER_OF_CHOICES && $_POST["choice-" . $i]) {
-    array_push($preferences, $i);
-    $i++;
+  $applicant_id = $db->insert_applicant(
+    $_POST['new_applicant'], $_POST['new_points']);
+  if ($applicant_id) {
+    for ($i = 1; $i <= NUMBER_OF_CHOICES; $i++) {
+      $institution_id = $_POST['choice-' . $i];
+      if (!$institution_id) break;
+      $db->insert_application($applicant_id, $institution_id, $i);
+    }
   }
-  $db->insert_applicant($_POST['new_applicant'], $_POST['new_points']);
   unset($_POST['new_applicant']);
   unset($_POST['new_points']);
   $changes++;

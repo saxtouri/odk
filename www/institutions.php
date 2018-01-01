@@ -14,10 +14,7 @@ $db = new ODKDB() or die("Cannot connect to DB");
 
 $changes = 0;
 if ($_POST && $_POST['new_institution']) {
-    $institution = $_POST['new_institution'];
-    $positions = $_POST['new_positions'];
-    $institution_id = $db->insert_institution($institution, $positions);
-    if ($institution_id && $positions > 0) $db->insert_job($institution_id);
+    $db->insert_institution($_POST['new_institution'], $_POST['new_positions']);
     unset($_POST['new_institution']);
     unset($_POST['new_positions']);
     $changes++;
