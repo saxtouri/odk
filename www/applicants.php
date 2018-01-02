@@ -34,7 +34,7 @@ if ($_POST && $_POST['new_applicant'] && $_POST['new_points']) {
   $changes++;
 }
 if ($_POST && $_POST['delete_applicant']) {
-  $r = $db->delete_applicant($_POST['delete_applicant']);
+  $db->delete_applicant_with_applications($_POST['delete_applicant']);
   unset($_POST['delete_applicant']);
   $changes++;
 }

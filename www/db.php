@@ -70,6 +70,16 @@ class ODKDB {
         ));
     }
 
+    function delete_applicant_with_applications($applicant_id) {
+        $this->start_transaction();
+        $r = $this->q(
+            "DELETE FROM application WHERE applicant_id=" . $applicant_id);
+        if ($r) $r = $this->q("DELETE FROM applicant "
+            . "WHERE applicant_id=\"" . $applicant_id . "\";"
+            );
+        return $this->end_transaction($r);
+    }
+
     // Institution
     private $init_institution = "CREATE TABLE IF NOT EXISTS institution ("
     . "institution_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
@@ -91,6 +101,16 @@ class ODKDB {
         return($this->q("DELETE FROM institution "
         . "WHERE institution_id=\"" . $institution_id . "\";"
         ));
+    }
+
+    function delete_institution_with_applications($institution_id) {
+        $this->start_transaction();
+        $this->q(
+            "DELETE FROM application WHERE institution_id=" . $institution_id);
+        $r = $this->q("DELETE FROM institution "
+        . "WHERE institution_id=\"" . $institution_id . "\";"
+        );
+        return $this->end_transaction($r);
     }
 
     // job
@@ -149,6 +169,16 @@ class ODKDB {
         . $applicant_id . ", ". $institution_id . ", ". $preference
         . ");");
         return $this->conn->insert_id;
+    }
+
+    public function delete_applications_by_applicant($applicant_id) {
+        return $this->q(
+            "DELETE FROM application WHERE applicant_id=" . $applicant_id);
+    }
+
+    public function delete_applications_by_institution($institution_id) {
+        return $this->q(
+            "DELETE FROM application WHERE institution_id=" . $institution_id);
     }
 
     // Helper methods

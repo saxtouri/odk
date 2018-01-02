@@ -20,7 +20,7 @@ if ($_POST && $_POST['new_institution']) {
     $changes++;
 }
 if ($_POST && $_POST['delete_institution']) {
-    $r = $db->delete_institution($_POST['delete_institution']);
+    $db->delete_institution_with_applications($_POST['delete_institution']);
     unset($_POST['delete_institution']);
     $changes++;
 }
