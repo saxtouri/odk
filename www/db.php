@@ -115,23 +115,32 @@ class ODKDB {
 
     // job
     private $init_job = "CREATE TABLE IF NOT EXISTS job ("
-    . "job_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
     . "institution_id INT NOT NULL, "
-    . "applicant_id INT, "
+    . "applicant_id INT NOT NULL, "
     . "FOREIGN KEY (institution_id) REFERENCES institution(institution_id), "
-    . "FOREIGN KEY (applicant_id) REFERENCES applicant(applicant_id)"
+    . "FOREIGN KEY (applicant_id) REFERENCES applicant(applicant_id), "
+    . "UNIQUE(institution_id, applicant_id)"
     . ");";
 
-    public function insert_job($institution_id, $applicant_id=NULL) {
+    public function insert_job($institution_id, $applicant_id) {
         $this->q("INSERT INTO job VALUES ("
-        . "NULL, "
-        . $institution_id . ", "
-        . (($applicant_id == NULL) ? "NULL" : $applicant_id)
+        . $institution_id . ", ". $applicant_id
         . ");");
         return $this->conn->insert_id;
     }
 
     // SELECT methods
+    public function get_institution_positions() {
+        $r = $this->q(
+            "SELECT institution_id, name, positions FROM institution");
+        $institutions = array();
+        while ($r and $row = $r->fetch_assoc()) {
+            $row["name"] = urldecode($row["name"]);
+            $institutions[$row["institution_id"]] = $row;
+        }
+        return $institutions;
+    }
+
     public function next_institution() {
         $this->start_transaction();
         $r = $this->q('SELECT * FROM institution ORDER BY institution_id;');
@@ -145,6 +154,17 @@ class ODKDB {
     public function next_applicant() {
         $this->start_transaction();
         $r = $this->q('SELECT * FROM applicant ORDER BY applicant_id;');
+        while ($r and $row = $r->fetch_assoc()) {
+            $row['name'] = urldecode($row['name']);
+            yield($row);
+        }
+        $this->end_transaction($r);
+    }
+
+    public function next_unpositioned() {
+        $this->start_transaction();
+        $r = $this->q("SELECT * FROM applicant WHERE applicant_id NOT IN ("
+        ."SELECT applicant_id FROM job);");
         while ($r and $row = $r->fetch_assoc()) {
             $row['name'] = urldecode($row['name']);
             yield($row);
@@ -179,6 +199,22 @@ class ODKDB {
     public function delete_applications_by_institution($institution_id) {
         return $this->q(
             "DELETE FROM application WHERE institution_id=" . $institution_id);
+    }
+
+    /** Get them in order of right to choose and preference */
+    function get_applicants_institutions() {
+        $this->start_transaction();
+        $r = $this->q("SELECT "
+        . "P.applicant_id, P.name, P.points, A.institution_id, A.preference "
+        . "FROM applicant P, application A "
+        . "WHERE P.applicant_id=A.applicant_id "
+        . "ORDER BY P.points DESC, A.preference ASC;"
+        );
+        while ($r and $row = $r->fetch_assoc()) {
+            $row["name"] = urldecode($row["name"]);
+            yield($row);
+        }
+        $this->end_transaction($r);
     }
 
     // Helper methods
