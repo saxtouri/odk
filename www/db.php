@@ -217,6 +217,13 @@ class ODKDB {
         $this->end_transaction($r);
     }
 
+    // Update methods
+    function update_institution($institution_id, $new_name, $new_positions) {
+        $this->q("UPDATE institution SET "
+        . "name=\"" . urlencode($new_name) . "\", positions=" . $new_positions
+        . " WHERE institution_id=" . $institution_id);
+    }
+
     // Helper methods
     public function print_init_queries() {
         echo "<p>" . $this->init_applicant . "</p>";

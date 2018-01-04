@@ -7,6 +7,8 @@ define('ADD_NEW_TITLE', 'Καταχώρηση επόμενου');
 define('INSTITUTIONS', 'Σχολεία');
 define('POSITIONS', 'Κενά');
 define('ACTIONS', ' ');
+define('UPD', 'Αλλαγή');
+define('CANCEL', 'Άκυρο');
 
 # Keep this here as long as it stands alone
 require_once('db.php');
@@ -17,6 +19,14 @@ if ($_POST && $_POST['new_institution']) {
     $db->insert_institution($_POST['new_institution'], $_POST['new_positions']);
     unset($_POST['new_institution']);
     unset($_POST['new_positions']);
+    $changes++;
+}
+if ($_POST && $_POST['upd_institution']) {
+    $db->update_institution(
+      $_POST['id'], $_POST['upd_institution'], $_POST['upd_positions']);
+    unset($_POST['id']);
+    unset($_POST['upd_institution']);
+    unset($_POST['upd_positions']);
     $changes++;
 }
 if ($_POST && $_POST['delete_institution']) {
@@ -31,12 +41,13 @@ if ($changes > 0) header("Refresh:0");
   <script type="text/javascript" src="static/js/jquery-3.2.1.min.js"></script>
   <script type="text/javascript" src="static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="static/bootstrap-3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="static/odk.css">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title><?php echo INSERT_TITLE; ?></title>
 </head>
 <html>
 
-  <div class="container">
+  <div class="container" id="main">
     <h4 class="col-sm-12 bg-primary">
       <span class="col-sm-8"><?php echo INSTITUTIONS; ?></span>
       <span class="col-sm-1"><?php echo POSITIONS; ?></span>
@@ -54,7 +65,8 @@ foreach ($db->next_institution() as $institution) {
       <h4 class="col-sm-12">
         <span class="col-sm-8"><?php echo $name; ?></span>
         <span class="col-sm-1"><?php echo $positions; ?></span>
-        <button type="submit" class="btn btn-warning" name="lala">
+        <button type="button" class="btn btn-warning" data-toggle="modal"
+          data-target="#inst-<?php echo $id?>-upd">
           <span class="glyphicon glyphicon-pencil"></span>
         </button>
         <button type="submit" class="btn btn-danger" formmethod="post"
@@ -63,6 +75,39 @@ foreach ($db->next_institution() as $institution) {
         </button>
       </h4>
     </form>
+    <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"
+      aria-labelledby="modal-<?php echo $id; ?>" id="inst-<?php echo $id?>-upd">
+    <form class="form-horizontal form-group modal-dialog modal-content"
+        id="inst-<?php echo $id?>-upd"action="./institutions.php">
+      <div class="modal-body">
+        <input type="hidden" name="id" value="<?php echo $id; ?>">
+        <div class="form-group">
+          <div class="col-sm-12">
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="upd_institution"
+                name="upd_institution" value="<?php echo $name; ?>"
+                placeholder="<?php echo ADD_NEW; ?>" required>
+            </div>
+            <div class="col-sm-2">
+              <input type="text" class="form-control" id="upd_positions"
+                name="upd_positions" value="<?php echo $positions; ?>"
+                placeholder="<?php echo ADD_NEW_POSITIONS; ?>" required>
+            </div>
+            <div>&nbsp;</div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success" formmethod="post">
+              <?php echo UPD; ?>
+            </button>
+            <button type="button" class="btn btn-warning" name="cancel_upd"
+               data-dismiss="modal">
+              <?php echo CANCEL; ?>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    </div>
 <?php } ?>
   </div>
 
@@ -83,11 +128,11 @@ foreach ($db->next_institution() as $institution) {
                    name="new_positions" required
                    placeholder="<?php echo ADD_NEW_POSITIONS; ?>">
           </div>
-        </div>
-        <div class="col-sm-3">
-          <button type="submit" class="btn btn-success" formmethod="post">
-            <span class="glyphicon glyphicon-ok">&nbsp;<?php echo ADD_NEW_BUTTON; ?></span>
-          </button>
+          <div class="col-sm-3">
+            <button type="submit" class="btn btn-success" formmethod="post">
+              <?php echo ADD_NEW_BUTTON; ?>
+            </button>
+          </div>
         </div>
       </div>
     </form>

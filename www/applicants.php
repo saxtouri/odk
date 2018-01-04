@@ -120,7 +120,6 @@ for ($i = 1; $i <= NUMBER_OF_CHOICES; $i++) {
           </div>
         </div>
 <?php } ?>
-        <div>&nbsp;</div>
         <div class="col-sm-12"><div class="col-sm-2">
           <button type="submit" class="btn btn-success" formmethod="post">
             <span class="glyphicon glyphicon-ok">&nbsp;<?php echo ADD_NEW_BUTTON; ?></span>
