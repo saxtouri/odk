@@ -23,11 +23,11 @@ class ODKDB {
         return $this->conn->close();
     }
 
-    private function start_transaction() {
+    public function start_transaction() {
         return $this->q("START TRANSACTION");
     }
 
-    private function end_transaction($success=TRUE) {
+    public function end_transaction($success=TRUE) {
         return $this->q(($success) ? "COMMIT" : "ROLLBACK");
     }
 
@@ -75,7 +75,7 @@ class ODKDB {
         $r = $this->q(
             "DELETE FROM application WHERE applicant_id=" . $applicant_id);
         if ($r) $r = $this->q("DELETE FROM applicant "
-            . "WHERE applicant_id=\"" . $applicant_id . "\";"
+            . "WHERE applicant_id=" . $applicant_id
             );
         return $this->end_transaction($r);
     }
@@ -201,6 +201,19 @@ class ODKDB {
             "DELETE FROM application WHERE institution_id=" . $institution_id);
     }
 
+    public function get_institutions_by_preference($applicant_id) {
+        $r = $this->q("SELECT I.* "
+        . "FROM application A, institution I "
+        . "WHERE A.applicant_id=" . $applicant_id
+        . " AND A.institution_id=I.institution_id ORDER BY A.preference;");
+        $institutions = array();
+        while ($r and $row = $r->fetch_assoc()) {
+            $row["name"] = urldecode($row["name"]);
+            $institutions[$row["institution_id"]] = $row;
+        }
+        return $institutions;
+    }
+
     /** Get them in order of right to choose and preference */
     function get_applicants_institutions() {
         $this->start_transaction();
@@ -218,10 +231,20 @@ class ODKDB {
     }
 
     // Update methods
-    function update_institution($institution_id, $new_name, $new_positions) {
+    public function update_institution($institution_id, $new_name, $new_positions) {
         $this->q("UPDATE institution SET "
         . "name=\"" . urlencode($new_name) . "\", positions=" . $new_positions
         . " WHERE institution_id=" . $institution_id);
+    }
+
+    public function update_applicant($applicant_id, $name, $points) {
+        return $this->q("UPDATE applicant SET "
+        . "name=\"" . urlencode($name) . "\", points=" . $points
+        . " WHERE applicant_id=" . $applicant_id);
+    }
+
+    public function clean_applications($applicant_id) {
+        $this->q("DELETE FROM application WHERE applicant_id=" . $applicant_id);
     }
 
     // Helper methods
