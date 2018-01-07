@@ -1,5 +1,4 @@
-<?php
-define('INSERT_TITLE', 'Σχολεία');
+<?php require_once('config.php');
 define('ADD_NEW', 'Εισάγετε ένα ακόμα σχολείο');
 define('ADD_NEW_POSITIONS', '0');
 define('ADD_NEW_BUTTON', 'καταχώρηση');
@@ -30,6 +29,7 @@ if ($_POST && $_POST['upd_institution']) {
     $changes++;
 }
 if ($_POST && $_POST['delete_institution']) {
+    $db->reset_jobs();
     $db->delete_institution_with_applications($_POST['delete_institution']);
     unset($_POST['delete_institution']);
     $changes++;
@@ -43,9 +43,9 @@ if ($changes > 0) header("Refresh:0");
   <link rel="stylesheet" href="static/bootstrap-3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="static/odk.css">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title><?php echo INSERT_TITLE; ?></title>
+  <title><?php echo MENU_INSTITUTIONS; ?></title>
 </head>
-<html>
+<html> <?php require("menu.php"); ?>
 
   <div class="container" id="main">
     <h4 class="col-sm-12 bg-primary">

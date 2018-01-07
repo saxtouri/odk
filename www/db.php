@@ -244,7 +244,11 @@ class ODKDB {
     }
 
     public function clean_applications($applicant_id) {
-        $this->q("DELETE FROM application WHERE applicant_id=" . $applicant_id);
+        return $this->q("DELETE FROM application WHERE applicant_id=" . $applicant_id);
+    }
+
+    public function reset_jobs() {
+        return $this->q("DELETE FROM job;");
     }
 
     // Helper methods

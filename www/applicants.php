@@ -1,5 +1,4 @@
-<?php
-define('INSERT_TITLE', 'Αιτούντες');
+<?php require_once('config.php');
 define('ADD_NEW', 'Ονοματεπώνυμο');
 define('ADD_NEW_POINTS', 'Μόρια');
 define('ADD_NEW_BUTTON', 'καταχώρηση');
@@ -50,6 +49,7 @@ if ($_POST && $_POST['upd_applicant']) {
   $db->end_transaction($r);
 }
 if ($_POST && $_POST['delete_applicant']) {
+  $db->reset_jobs();
   $db->delete_applicant_with_applications($_POST['delete_applicant']);
   unset($_POST['delete_applicant']);
   $changes++;
@@ -106,9 +106,9 @@ function show_choices($applicant_id=NULL) {
   <link rel="stylesheet" href="static/bootstrap-3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="static/odk.css">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title><?php echo INSERT_TITLE; ?></title>
+  <title><?php echo MENU_APPLICANTS; ?></title>
 </head>
-<html>
+<html> <?php require("menu.php"); ?>
   <div class="container">
     <h4 class="col-sm-12 bg-primary">
       <span class="col-sm-8"><?php echo APPLICANTS; ?></span>

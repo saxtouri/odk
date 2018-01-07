@@ -1,5 +1,4 @@
-<?php
-define('PAGE_TITLE', 'Προτεινόμενη κατανομή κενών');
+<?php require_once('config.php');
 define('APPLICANTS', 'Αιτούντες');
 define('INSTITUTIONS', 'Σχολεία');
 define('POINTS', 'Μόρια');
@@ -14,9 +13,9 @@ $db = new ODKDB() or die("Cannot connect to DB");
   <script type="text/javascript" src="static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="static/bootstrap-3.3.7/css/bootstrap.min.css">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title><?php echo PAGE_TITLE; ?></title>
+  <title><?php echo MENU_RESOLVE; ?></title>
 </head>
-<html>
+<html> <?php require("menu.php"); ?>
   <div class="container">
     <h4 class="col-sm-12 bg-primary">
       <span class="col-sm-5"><?php echo APPLICANTS; ?></span>
