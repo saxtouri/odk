@@ -1,4 +1,4 @@
-<?php require('config.php'); ?>
+<?php require_once('config.php'); ?>
 <nav class="navbar navbar-default navbar-static-top">
   <div class="container">
     <div class="navbar-header">
