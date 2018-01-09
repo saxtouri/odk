@@ -3,13 +3,8 @@ define('ADD_NEW', 'Ονοματεπώνυμο');
 define('ADD_NEW_POINTS', 'Μόρια');
 define('ADD_NEW_BUTTON', 'καταχώρηση');
 define('ADD_NEW_TITLE', 'Επόμενη αίτηση');
-define('APPLICANTS', 'Αιτούντες');
-define('POINTS', 'Μόρια');
-define('ACTIONS', ' ');
 define('CHOICES_TITLE', 'Σειρά προτιμήσεων');
-define('CHOICE', 'Προτίμηση');
 define('EMPTY_CHOICE', 'Καμία επιλογή');
-define('NUMBER_OF_CHOICES', 5);
 define('UPD', 'Αλλαγή');
 define('CANCEL', 'Άκυρο');
 
@@ -24,7 +19,7 @@ if ($_POST && $_POST['new_applicant'] && $_POST['new_points']) {
   $applicant_id = $db->insert_applicant(
     $_POST['new_applicant'], $_POST['new_points']);
   if ($applicant_id) {
-    for ($i = 1; $i <= NUMBER_OF_CHOICES; $i++) {
+    for ($i = 1; $i <= APPL_NUMBER_OF_CHOICES; $i++) {
       $institution_id = $_POST['choice-' . $i];
       if (!$institution_id) break;
       $db->insert_application($applicant_id, $institution_id, $i);
@@ -41,7 +36,7 @@ if ($_POST && $_POST['upd_applicant']) {
   $db->start_transaction();
   $r = $db->update_applicant($applicant_id, $applicant_name, $applicant_points);
   $db->clean_applications($applicant_id);
-  for ($i = 1; $i <= NUMBER_OF_CHOICES; $i++) {
+  for ($i = 1; $i <= APPL_NUMBER_OF_CHOICES; $i++) {
     $institution_id = $_POST['choice-' . $i];
     if (!$institution_id) break;
     $db->insert_application($applicant_id, $institution_id, $i);
@@ -65,7 +60,7 @@ function show_choices($applicant_id=NULL) {
   $preferences = array();
   if ($applicant_id)
     $preferences = $db->get_institutions_by_preference($applicant_id);
-  for ($i = 1; $i <= NUMBER_OF_CHOICES; $i++) {
+  for ($i = 1; $i <= APPL_NUMBER_OF_CHOICES; $i++) {
     $pref = NULL;
 ?>
         <div class="col-sm-12">
@@ -110,17 +105,22 @@ function show_choices($applicant_id=NULL) {
 </head>
 <html> <?php require("menu.php"); ?>
   <div class="container">
+    <a class="btn btn-default pull-right glyphicon glyphicon-save"
+        role="button"
+        href="export_csv.php?export=applicants&filename=applicants.csv">
+      <?php echo EXPORT_CSV; ?>
+    </a>
     <h4 class="col-sm-12 bg-primary">
-      <span class="col-sm-8"><?php echo APPLICANTS; ?></span>
-      <span class="col-sm-1"><?php echo POINTS; ?></span>
-      <span class="col-sm-3"><?php echo ACTIONS; ?></span>
+      <span class="col-sm-8"><?php echo HEAD_APPLICANTS; ?></span>
+      <span class="col-sm-1"><?php echo HEAD_POINTS; ?></span>
+      <span class="col-sm-3"><?php echo HEAD_ACTIONS; ?></span>
     </h4>
 
 <?php
 foreach ($db->next_applicant() as $applicant) {
     $id = $applicant['applicant_id'];
     $name = $applicant['name'];
-    $points = $applicant['points']
+    $points = $applicant['points'];
 ?>
     <form class="form-horizontal form-group" id="appl-<?php echo $id; ?>">
       <h4 class="col-sm-12">

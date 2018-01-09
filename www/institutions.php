@@ -1,11 +1,9 @@
 <?php require_once('config.php');
+
 define('ADD_NEW', 'Εισάγετε ένα ακόμα σχολείο');
 define('ADD_NEW_POSITIONS', '0');
 define('ADD_NEW_BUTTON', 'καταχώρηση');
 define('ADD_NEW_TITLE', 'Καταχώρηση επόμενου');
-define('INSTITUTIONS', 'Σχολεία');
-define('POSITIONS', 'Κενά');
-define('ACTIONS', ' ');
 define('UPD', 'Αλλαγή');
 define('CANCEL', 'Άκυρο');
 
@@ -48,10 +46,15 @@ if ($changes > 0) header("Refresh:0");
 <html> <?php require("menu.php"); ?>
 
   <div class="container" id="main">
+    <a class="btn btn-default pull-right glyphicon glyphicon-save"
+        role="button"
+        href="export_csv.php?export=institutions&filename=institutions.csv">
+      <?php echo EXPORT_CSV; ?>
+    </a>
     <h4 class="col-sm-12 bg-primary">
-      <span class="col-sm-8"><?php echo INSTITUTIONS; ?></span>
-      <span class="col-sm-1"><?php echo POSITIONS; ?></span>
-      <span class="col-sm-3"><?php echo ACTIONS; ?></span>
+      <span class="col-sm-8"><?php echo HEAD_INSTITUTIONS; ?></span>
+      <span class="col-sm-1"><?php echo HEAD_POSITIONS; ?></span>
+      <span class="col-sm-3"><?php echo HEAD_ACTIONS; ?></span>
     </h4>
 
 <?php

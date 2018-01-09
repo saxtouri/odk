@@ -161,6 +161,28 @@ class ODKDB {
         $this->end_transaction($r);
     }
 
+    public function next_job() {
+        $this->start_transaction();
+        $r = $this->q("SELECT "
+        . "A.applicant_id as applicant_id, "
+        . "A.name as applicant_name, "
+        . "I.institution_id as institution_id, "
+        . "I.name as institution_name, "
+        . "A.points as points, P.preference as preference "
+        . "FROM applicant A, institution I, job J, application P "
+        . "WHERE "
+        . "A.applicant_id=J.applicant_id AND "
+        . "I.institution_id=J.institution_id AND "
+        . "P.applicant_id=J.applicant_id AND P.institution_id=J.institution_id;"
+        );
+        while ($r and $row = $r->fetch_assoc()) {
+            $row['applicant_name'] = urldecode($row['applicant_name']);
+            $row['institution_name'] = urldecode($row['institution_name']);
+            yield($row);
+        }
+        $this->end_transaction($r);
+    }
+
     public function next_unpositioned() {
         $this->start_transaction();
         $r = $this->q("SELECT * FROM applicant WHERE applicant_id NOT IN ("

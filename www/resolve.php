@@ -1,8 +1,4 @@
 <?php require_once('config.php');
-define('APPLICANTS', 'Αιτούντες');
-define('INSTITUTIONS', 'Σχολεία');
-define('POINTS', 'Μόρια');
-define('CHOICE', 'Προτίμηση');
 
 # Keep this here as long as it stands alone
 require_once('db.php');
@@ -17,13 +13,19 @@ $db = new ODKDB() or die("Cannot connect to DB");
 </head>
 <html> <?php require("menu.php"); ?>
   <div class="container">
+    <a class="btn btn-default pull-right glyphicon glyphicon-save"
+        role="button"
+        href="export_csv.php?export=resolve&filename=resolve.csv">
+      <?php echo EXPORT_CSV; ?>
+    </a>
     <h4 class="col-sm-12 bg-primary">
-      <span class="col-sm-5"><?php echo APPLICANTS; ?></span>
-      <span class="col-sm-5"><?php echo INSTITUTIONS; ?></span>
-      <span class="col-sm-1"><?php echo POINTS; ?></span>
+      <span class="col-sm-5"><?php echo HEAD_APPLICANTS; ?></span>
+      <span class="col-sm-5"><?php echo HEAD_INSTITUTIONS; ?></span>
+      <span class="col-sm-1"><?php echo HEAD_POINTS; ?></span>
       <span class="col-sm-1"><?php echo CHOICE; ?></span>
     </h4>
 <?php
+$db->reset_jobs();
 $institutions = $db->get_institution_positions();
 $positioned = array();
 foreach ($db->get_applicants_institutions() as $r) {
