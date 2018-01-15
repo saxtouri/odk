@@ -15,7 +15,9 @@ $db = new ODKDB() or die("Cannot connect to DB");
 
 // If something should change, change it and refresh the page
 $changes = 0;
-if ($_POST && $_POST['new_applicant'] && $_POST['new_points']) {
+if ($_POST
+&& array_key_exists('new_applicant', $_POST)
+&& array_key_exists('new_points', $_POST)) {
   $applicant_id = $db->insert_applicant(
     $_POST['new_applicant'], $_POST['new_points']);
   if ($applicant_id) {
@@ -29,7 +31,7 @@ if ($_POST && $_POST['new_applicant'] && $_POST['new_points']) {
   unset($_POST['new_points']);
   $changes++;
 }
-if ($_POST && $_POST['upd_applicant']) {
+if ($_POST && array_key_exists('upd_applicant', $_POST)) {
   $applicant_id = $_POST['upd_applicant_id'];
   $applicant_name = $_POST['upd_applicant'];
   $applicant_points = $_POST['upd_points'];
@@ -43,7 +45,7 @@ if ($_POST && $_POST['upd_applicant']) {
   }
   $db->end_transaction($r);
 }
-if ($_POST && $_POST['delete_applicant']) {
+if ($_POST && array_key_exists('delete_applicant', $_POST)) {
   $db->reset_jobs();
   $db->delete_applicant_with_applications($_POST['delete_applicant']);
   unset($_POST['delete_applicant']);
@@ -71,7 +73,7 @@ function show_choices($applicant_id=NULL) {
             <select class="form-control" id="choice-<?php echo $i; ?>"
                 name="choice-<?php echo $i; ?>">
             <?php
-            if ($preferences[$i]) {
+            if (array_key_exists($i, $preferences)) {
               $pref = $preferences[$i];
             ?>
               <option value="<?php echo $pref['institution_id']; ?>">

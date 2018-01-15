@@ -30,10 +30,10 @@ $institutions = $db->get_institution_positions();
 $positioned = array();
 foreach ($db->get_applicants_institutions() as $r) {
   $applicant_id = $r["applicant_id"];
-  if ($positioned[$applicant_id]) continue;
+  if (array_key_exists($applicant_id, $positioned)) continue;
   $institution_id = $r["institution_id"];
   $institution = $institutions[$institution_id];
-  if ($institution && $institution["positions"] > 0) {
+  if ($institution && $institution['positions'] > 0) {
     $institution_name = $institution["name"];
     $applicant_name = $r["name"];
     $applicant_points = $r["points"];

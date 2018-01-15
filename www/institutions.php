@@ -12,13 +12,13 @@ require_once('db.php');
 $db = new ODKDB() or die("Cannot connect to DB");
 
 $changes = 0;
-if ($_POST && $_POST['new_institution']) {
+if ($_POST && array_key_exists('new_institution', $_POST)) {
     $db->insert_institution($_POST['new_institution'], $_POST['new_positions']);
     unset($_POST['new_institution']);
     unset($_POST['new_positions']);
     $changes++;
 }
-if ($_POST && $_POST['upd_institution']) {
+if ($_POST && array_key_exists('upd_institution', $_POST)) {
     $db->update_institution(
       $_POST['id'], $_POST['upd_institution'], $_POST['upd_positions']);
     unset($_POST['id']);
@@ -26,7 +26,7 @@ if ($_POST && $_POST['upd_institution']) {
     unset($_POST['upd_positions']);
     $changes++;
 }
-if ($_POST && $_POST['delete_institution']) {
+if ($_POST && array_key_exists('delete_institution', $_POST)) {
     $db->reset_jobs();
     $db->delete_institution_with_applications($_POST['delete_institution']);
     unset($_POST['delete_institution']);
